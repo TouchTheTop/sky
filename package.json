@@ -1,23 +1,45 @@
 {
   "name": "skyjt",
-  "version": "0.9.14",
+  "version": "0.9.53",
   "description": "skyjt",
   "main": "skyjt.js",
   "dependencies": {
     "bluebird": "^3.5.4",
     "commander": "^2.20.0",
+    "j2dir": "^0.1.5",
     "j2sql": "^1.9.21",
-    "meeko": "^1.7.47",
+    "meeko": "^1.7.66",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "cz-jt": "^0.1.2",
+    "eslint": "^6.0.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslintfix": "eslint ./jt.js --fix",
+    "cz": "git add . && git status && git cz && npm version patch && npm publish .",
+    "patch": "git add . && git commit -m:pencil2: && npm version patch && npm publish .",
+    "bug": "git add . && git commit -m:bug: && npm version patch && npm publish ."
   },
   "bin": {
     "skyjt": "./skyjt.js"
   },
-  "author": "skykong",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kongnet/sky.git"
+  },
+  "author": "Kongnet <9601698@qq.com>",
+  "license": "BSD-2-Clause",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-jt"
+    }
+  }
 }

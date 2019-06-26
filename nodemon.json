@@ -12,7 +12,9 @@
     "tests",
     "tools",
     "mochawesome-report",
-    "mochawesome-reports"
+    "output",
+    "mochawesome-reports",
+    "jt.js"
   ],
   "watch": [],
   "verbose": false
