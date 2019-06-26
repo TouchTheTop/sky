@@ -5,57 +5,27 @@ let Pack = require('./package.json')
 let path = require('path')
 const req = require('request-promise-native')
 // 版本号检测
-async function checkVersion() {
+async function checkVersion () {
   let r = await req({
     method: 'get',
     uri: 'https://raw.githubusercontent.com/kongnet/sky/master/package.json',
     timeout: 2000
   })
   let verLocal = Pack.version.split('.')
-  let s1 = verLocal.reduce(
-    (x, y, idx) => +x * 10 ** (4 - idx) + +y * 10 ** (3 - idx)
-  )
+  let s1 = verLocal.reduce((x, y, idx) => (+x) * (10 ** (4 - idx)) + (+y) * (10 ** (3 - idx)))
   let ver = JSON.parse(r.replaceAll('\n', '')).version.split('.')
-  let s2 = ver.reduce(
-    (x, y, idx) => +x * 10 ** (4 - idx) + +y * 10 ** (3 - idx)
-  )
+  let s2 = ver.reduce((x, y, idx) => (+x) * (10 ** (4 - idx)) + (+y) * (10 ** (3 - idx)))
   if (s2 > s1) {
-    console.log(
-      '新版本发现',
-      verLocal.join('.'),
-      '=>',
-      $.c.m(ver.join('.')),
-      $.c.c(' npm i -g skyjt ')
-    )
+    console.log('新版本发现', verLocal.join('.'), '=>', $.c.m(ver.join('.')), $.c.c(' npm i -g skyjt '))
   }
 }
 checkVersion()
 let tools = $.requireAll(path.join(__dirname, '.', 'lib'))
 let spinnerHandler = {}
-// 输出字符键盘1
-function keyboard() {
-  console.log(
-    (_ =>
-      [..."`1234567890-=~~QWERTYUIOP[]\\~ASDFGHJKL;'~~ZXCVBNM,./~"].map(
-        x =>
-          ((o += `/${(b = '_'.repeat(
-            (w =
-              x < y
-                ? 2
-                : ' 667699'[
-                    ((x = ['BS', 'TAB', 'CAPS', 'ENTER'][p++] || 'SHIFT'), p)
-                  ])
-          ))}\\|`),
-          (m += y + (x + '    ').slice(0, w) + y + y),
-          (n += y + b + y + y),
-          (l += ' __' + b))[73] &&
-          (k.push(l, m, n, o), (l = ''), (m = n = o = y)),
-        (m = n = o = y = '|'),
-        (p = l = k = [])
-      ) &&
-      k.join`
-`)()
-  )
+// 输出字符键盘
+function keyboard () {
+  console.log((_ => [..."`1234567890-=~~QWERTYUIOP[]\\~ASDFGHJKL;'~~ZXCVBNM,./~"].map(x => (o += `/${b = '_'.repeat(w = x < y ? 2 : ' 667699'[x = ['BS', 'TAB', 'CAPS', 'ENTER'][p++] || 'SHIFT', p])}\\|`, m += y + (x + '    ').slice(0, w) + y + y, n += y + b + y + y, l += ' __' + b)[73] && (k.push(l, m, n, o), l = '', m = n = o = y), m = n = o = y = '|', p = l = k = []) && k.join`
+`)())
 }
 commander
   .usage('[command] [options] <file ...>')
@@ -63,20 +33,14 @@ commander
 // .option('-a, --aaa-bbb', 'commander.aaaBbb')
 // .option('-mp, --mp', 'cheat miniProgram')
 
-commander
-  .command('init [option]')
+commander.command('init [option]')
   .alias('i')
-  .description(
-    $.c.g('Init') + ' Sky Framework or .js like skyFrameworkConfig.js'
-  )
+  .description($.c.g('Init') + ' Sky Framework or .js like skyFrameworkConfig.js')
   .option('-n, --name <name>', 'defaults to ./output')
-  .option(
-    '-c, --config <file>',
-    'read config path from .js, defalut to ./output'
-  )
+  .option('-c, --config <file>', 'read config path from .js, defalut to ./output')
   .option('-t, --template <templatename>', 'sky|mp| ...')
   .option('-f, --force', 'force cover dir')
-  .action(async function(option, name) {
+  .action(async function (option, name) {
     let r = {}
     spinnerHandler = new $.Spinner()
     spinnerHandler.start('Project Init...')
@@ -84,22 +48,13 @@ commander
     if (typeof name.name === 'string') projectName = name.name
     if (name.config) {
       const setting = require(path.join(__dirname, name.config))
-      r = await tools.init.index.init(
-        name.name ? projectName : 'output',
-        name.force,
-        name.template,
-        setting
-      )
+      r = await tools.init.index.init(name.name ? projectName : 'output', name.force, name.template, setting)
       // tools.init.index.initByConfig(projectName, setting, name.force)
     } else {
-      r = await tools.init.index.init(
-        name.name ? projectName : 'output',
-        name.force,
-        name.template
-      )
+      r = await tools.init.index.init(name.name ? projectName : 'output', name.force, name.template)
     }
     // tools.init.index.init(name.create ? name.create : 'output', name.force)
-    setTimeout(function() {
+    setTimeout(function () {
       spinnerHandler.stop()
       if (r.templateName) {
         console.log(`${r.templateName} [${r.ver}] Init Done.`)
@@ -107,44 +62,11 @@ commander
       process.exit(0)
     }, 2000)
   })
-commander
-  .command('czjt')
-  .description(`Install ${$.c.g('Jiatui commitizen')}`)
-  .action(function(option, path) {
-    tools.czjt.index.install()
-  })
-commander
-  .command('jtjs [option]')
-  .alias('jt')
-  .description(`Init ${$.c.g('JiatuiCommonJS')}`)
-  .option('-c, --config <path>', 'defaults to ./jt.js')
-  .action(function(option, path) {
-    if (path.config) {
-      tools.jtjs.index.writeFile(path.config)
-    } else {
-      tools.jtjs.index.writeFile('')
-    }
-  })
-commander
-  .command('jtjs [option]')
-  .alias('jt')
-  .description('Init JiatuiCommonJS')
-  .option('-c, --config <path>', 'defaults to ./jt.js')
-  .action(function(option, path) {
-    if (path.config) {
-      tools.jtjs.index.writeFileSync(path.config)
-    } else {
-      tools.jtjs.index.writeFileSync('')
-    }
-  })
-commander
-  .command('dbscan [option]')
+commander.command('dbscan [option]')
   .alias('db')
-  .description(
-    'scan ' + $.c.g('Mysql JiaTui rules') + ' Default: 127.0.0.1/root/123456'
-  )
+  .description('scan ' + $.c.g('Mysql JiaTui rules') + ' Default: 127.0.0.1/root/123456')
   .option('-c, --config <path>', 'defaults to ./config.js')
-  .action(function(option, p) {
+  .action(function (option, p) {
     // console.log(option, p.config)
     if (p.config) {
       tools.dbscan.index.scan(p.config)
@@ -152,25 +74,21 @@ commander
       tools.dbscan.index.scan()
     }
   })
-commander
-  .command('gitstat')
+commander.command('gitstat')
   .description('Statistics git author commits and lines')
-  .action(function(option, p) {
+  .action(function (option, p) {
     tools.gitstat.index.scan()
   })
-commander
-  .command('commentscan [option]')
+commander.command('commentscan [option]')
   .alias('comment')
   .description('scan ' + $.c.g('Function Comment JiaTui rules.'))
   .option('-c, --config <path>', 'defaults to ./commentConf.js')
-  .action(async function(option, p) {
+  .action(async function (option, p) {
     spinnerHandler = new $.Spinner()
     spinnerHandler.start('Scan files...')
 
     const childProcess = require('child_process')
-    const worker = childProcess.fork(
-      path.join(__dirname, '/worker_commentscan.js')
-    )
+    const worker = childProcess.fork(path.join(__dirname, '/worker_commentscan.js'))
     worker.on('message', m => {
       // $.log(m)
       if (m.type === 'end') {
@@ -185,12 +103,11 @@ commander
     })
     // tools.commentscan.index(p.config)
   })
-commander
-  .command('swaggerscan [option]')
+commander.command('swaggerscan [option]')
   .alias('swagger')
   .description('scan ' + $.c.g('Swagger JiaTui rules'))
   .option('-c, --config <path>', 'defaults to ./config.js')
-  .action(async function(option, p) {
+  .action(async function (option, p) {
     // $.log('swagger', path.config)
     spinnerHandler = new $.Spinner()
     spinnerHandler.start('Swagger scan...')
@@ -200,18 +117,17 @@ commander
     } else {
       r = await tools.swaggerscan.index.scan()
     }
-    setTimeout(function() {
+    setTimeout(function () {
       spinnerHandler.stop()
       $.dir(r)
       console.log('Scan Done.')
       process.exit(0)
     }, 2000)
   })
-commander
-  .command('wttr')
+commander.command('wttr')
   .description('weather output -c [city]')
   .option('-c, --city [city]', 'defaults local')
-  .action(async function(option, p) {
+  .action(async function (option, p) {
     // $.log(option.city)
     spinnerHandler = new $.Spinner()
     spinnerHandler.start('Downloading...')
@@ -219,53 +135,42 @@ commander
     spinnerHandler.stop()
     process.stdout.write(r)
   })
-commander
-  .command('coin')
+commander.command('coin')
   .description('cryptocurrencies exchange rates -c [coin name]')
   .option('-c, --coin [name]', 'defaults top 10')
-  .action(async function(option, p) {
+  .action(async function (option, p) {
     spinnerHandler = new $.Spinner()
     spinnerHandler.start('Downloading...')
     let r = await tools.curl.index.coin(option.coin)
     spinnerHandler.stop()
     process.stdout.write(r)
   })
-commander
-  .command('history')
+commander.command('history')
   .description('today history ')
-  .action(function(option, p) {
+  .action(function (option, p) {
     tools.todayhistory.index.scan()
   })
-commander
-  .command('fun')
+commander.command('fun')
   .description('fun output')
-  .action(function(option, p) {
+  .action(function (option, p) {
     keyboard()
   })
-commander
-  .command('get')
+commander.command('get')
   .description(`${$.c.g('Get')} -h url -p param`)
   .option('-p, --param [param]', '')
   .option('-h, --host <param>', '')
-  .action(function(option, p) {
-    if (
-      option.host &&
-      (option.host.includes('http://') || option.host.includes('https://'))
-    ) {
+  .action(function (option, p) {
+    if (option.host && (option.host.includes('http://') || option.host.includes('https://'))) {
       option.method = 'get'
       tools.curl.index.scan(option)
     }
   })
-commander
-  .command('post')
+commander.command('post')
   .description(`${$.c.g('Post')} -h url -p param`)
   .option('-p, --param [param]', '')
   .option('-h, --host <param>', '')
-  .action(function(option, p) {
-    if (
-      option.host &&
-      (option.host.includes('http://') || option.host.includes('https://'))
-    ) {
+  .action(function (option, p) {
+    if (option.host && (option.host.includes('http://') || option.host.includes('https://'))) {
       option.method = 'post'
       tools.curl.index.scan(option)
     }
